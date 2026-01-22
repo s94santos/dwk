@@ -15,5 +15,5 @@ spec:
         app: the-project
     spec:
       containers:
-      - image: ssantos94/the_project:bawbh90
+      - image: docker.io/ssantos94/the_project:q3974hn
         name: todo-app
