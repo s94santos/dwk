@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Simple SPA</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    nav {
+      background: #222;
+      padding: 10px;
+    }
+    nav a {
+      color: white;
+      margin-right: 15px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    #app {
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a onclick="navigate('home')">Home</a>
+    <a onclick="navigate('about')">About</a>
+    <a onclick="navigate('contact')">Contact</a>
+  </nav>
+
+  <div id="app"></div>
+
+  <script>
+    const routes = {
+      home: `
+        <h1>Home</h1>
+        <p>Welcome to this simple Single Page Application.</p>
+      `,
+      about: `
+        <h1>About</h1>
+        <p>This SPA is built using plain JavaScript.</p>
+      `,
+      contact: `
+        <h1>Contact</h1>
+        <p>Email us at example@email.com</p>
+      `
+    };
+
+    function navigate(route) {
+      document.getElementById("app").innerHTML = routes[route];
+      history.pushState({}, "", "#" + route);
+    }
+
+    window.onpopstate = () => {
+      const route = location.hash.replace("#", "") || "home";
+      document.getElementById("app").innerHTML = routes[route];
+    };
+
+    // Load default route
+    navigate("home");
+  </script>
+
+</body>
+</html>

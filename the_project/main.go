@@ -3,23 +3,22 @@ package main
 import (
 	"fmt"
 	"os"
-	"github.com/gin-gonic/gin"
+	"the_project/m/v2/routers"
 )
 
 func startServer() {
-	
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 	fmt.Printf("Server started in port %s\n", port)
-	
-	gin.SetMode(gin.ReleaseMode)
-	router := gin.Default()
-	router.Run(":" + port) 
+
+	r := routers.SetRoutes()
+
+	r.Run(":" + port)
 }
 
 func main() {
-  startServer()
+	startServer()
 }
-
