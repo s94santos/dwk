@@ -15,5 +15,10 @@ spec:
         app: the-project
     spec:
       containers:
-      - image: docker.io/ssantos94/the_project:q3974hn
-        name: todo-app
+      - name: todo-app
+        image: docker.io/ssantos94/the_project:q3974hn
+        env: 
+          - name: PORT
+            value: "9090"
+          - name: GIN_MODE
+            value: "release"
