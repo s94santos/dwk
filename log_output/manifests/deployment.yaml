@@ -14,6 +14,21 @@ spec:
       labels:
         app: log-output
     spec:
+      volumes:
+      - name: data-volume
+        emptyDir: {}
       containers:
-      - image: ssantos94/log-output:9we874bh
-        name: log-output
+      - image: ssantos94/log-output:9awhe847
+        name: log-output-api
+        command: ["./log-output"]
+        args: ["api"]
+        volumeMounts:
+        - name: data-volume
+          mountPath: /app/data
+      - image: ssantos94/log-output:9awhe847
+        name: log-output-random
+        command: ["./log-output"]
+        args: ["random"]
+        volumeMounts:
+        - name: data-volume
+          mountPath: /app/data

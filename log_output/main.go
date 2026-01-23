@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 	"log_module/m/v2/routers"
+	"os"
 )
 
 func generateRandomString() (string, error) {
@@ -23,15 +24,27 @@ func generateRandomString() (string, error) {
 	), nil
 }
 
-func main() {
+func createFile() {
+	if _, err := os.Stat("./data/data.txt"); err != nil {
+		fmt.Println("Creating data.txt file")
+		randomString, err := generateRandomString()
+		if err != nil {
+			panic(err)
+		}
 
-	randomString, err := generateRandomString()
+		err = os.WriteFile("./data/data.txt", []byte(randomString), 0644)
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+
+func runRandom() {
+
+	randomString, err := os.ReadFile("./data/data.txt")
 	if err != nil {
 		panic(err)
 	}
-
-	router := routers.SetupRouter(randomString)
-	router.Run(":8080")
 
 	ticker := time.NewTicker(5 * time.Second)
 	defer ticker.Stop()
@@ -39,5 +52,34 @@ func main() {
 	for {
 		t := <-ticker.C
 		fmt.Printf("%s: %s\n", t.UTC().Format(time.RFC3339Nano), randomString)
+	}
+}
+
+func runApi() {
+	randomString, err := os.ReadFile("./data/data.txt")
+	if err != nil {
+		panic(err)
+	}
+
+	router := routers.SetupRouter(string(randomString))
+	router.Run(":8080")
+}
+
+func main() {
+	if len(os.Args) < 2 {
+		fmt.Println("usage: todo-app [api|random]")
+		os.Exit(1)
+	}
+
+	createFile()
+
+	switch os.Args[1] {
+	case "api":
+		runApi()
+	case "random":
+		runRandom()
+	default:
+		fmt.Println("unknown command:", os.Args[1])
+		os.Exit(1)
 	}
 }

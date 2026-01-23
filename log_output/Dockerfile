@@ -8,6 +8,6 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o /log-output
+RUN CGO_ENABLED=0 GOOS=linux go build -o /app/log-output
 
-CMD ["/log-output"]
+CMD ["/app/log-output"]
