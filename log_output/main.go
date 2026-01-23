@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"fmt"
 	"time"
+	"log_module/m/v2/routers"
 )
 
 func generateRandomString() (string, error) {
@@ -23,10 +24,14 @@ func generateRandomString() (string, error) {
 }
 
 func main() {
+
 	randomString, err := generateRandomString()
 	if err != nil {
 		panic(err)
 	}
+
+	router := routers.SetupRouter(randomString)
+	router.Run(":8080")
 
 	ticker := time.NewTicker(5 * time.Second)
 	defer ticker.Stop()

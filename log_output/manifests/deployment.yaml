@@ -15,5 +15,5 @@ spec:
         app: log-output
     spec:
       containers:
-      - image: ssantos94/log-output:ae497hj
+      - image: ssantos94/log-output:9we874bh
         name: log-output
