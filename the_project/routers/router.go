@@ -24,14 +24,26 @@ func SetRoutes() *gin.Engine {
 	r.GET("/", landingPage)
 	r.GET("/image", imageHandler)
 
+	r.LoadHTMLGlob("public/*")
+
 	return r
 
 }
 
 
 func landingPage(c *gin.Context) {
+	
 	handler()
-	c.File("public/index.html")
+	
+	todos := []string{
+			"Learn Go",
+			"Build a web app",
+			"Deploy with Docker",
+	}
+
+	c.HTML(200, "index.html", gin.H{
+		"todos": todos,
+	})
 }
 
 func handler() {

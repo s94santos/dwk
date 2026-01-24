@@ -20,7 +20,7 @@ spec:
             claimName: project-pvc
       containers:
       - name: project
-        image: ssantos94/the_project:b798Jh
+        image: ssantos94/the_project:7GHW8V
         env: 
           - name: PORT
             value: "9090"

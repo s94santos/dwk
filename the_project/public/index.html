@@ -34,10 +34,27 @@
     <a onclick="navigate('about')">About</a>
     <a onclick="navigate('contact')">Contact</a>
   </nav>
-
-  <img src="/image" style="max-width:100%;" />
-
+  
   <div id="app"></div>
+  
+  <img src="/image" style="max-width:100%;" />
+  
+  <form>
+      <input
+          type="text"
+          placeholder="Enter a todo (max 140 chars)"
+          maxlength="140"
+      />
+      <br />
+      <button type="submit">Add Todo</button>
+  </form>
+
+  <h2>Todos</h2>
+  <ul>
+      {{ range .todos }}
+          <li>{{ . }}</li>
+      {{ end }}
+  </ul>
 
   <script>
     const routes = {
