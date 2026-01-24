@@ -3,9 +3,13 @@ package main
 import (
 	"fmt"
 	"os"
-
 	"the_project/m/v2/routers"
 )
+
+const (
+	cacheDir  = "cache"
+)
+
 
 func startServer() {
 
@@ -21,5 +25,7 @@ func startServer() {
 }
 
 func main() {
+
+	_ = os.MkdirAll(cacheDir, 0755)
 	startServer()
 }

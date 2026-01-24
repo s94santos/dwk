@@ -14,11 +14,18 @@ spec:
       labels:
         app: the-project
     spec:
+      volumes:
+        - name: project-storage
+          persistentVolumeClaim:
+            claimName: project-pvc
       containers:
-      - name: todo-app
-        image: docker.io/ssantos94/the_project:q3974hn
+      - name: project
+        image: ssantos94/the_project:b798Jh
         env: 
           - name: PORT
             value: "9090"
           - name: GIN_MODE
             value: "release"
+        volumeMounts:
+          - mountPath: /app/cache
+            name: project-storage
