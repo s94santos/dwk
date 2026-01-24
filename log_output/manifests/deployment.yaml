@@ -17,15 +17,20 @@ spec:
       volumes:
       - name: data-volume
         emptyDir: {}
+      - name: pingpong-volume
+        persistentVolumeClaim:
+          claimName: ping-pong-claim
       containers:
-      - image: ssantos94/log-output:9awhe847
+      - image: ssantos94/log-output:9nbW7hb8
         name: log-output-api
         command: ["./log-output"]
         args: ["api"]
         volumeMounts:
         - name: data-volume
           mountPath: /app/data
-      - image: ssantos94/log-output:9awhe847
+        - name: pingpong-volume
+          mountPath: /app/counter
+      - image: ssantos94/log-output:9nbW7hb8
         name: log-output-random
         command: ["./log-output"]
         args: ["random"]

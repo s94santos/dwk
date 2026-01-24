@@ -14,3 +14,4 @@
 - [1.8.](https://github.com/s94santos/dwk/tree/1.8/the_project)
 - [1.9.](https://github.com/s94santos/dwk/tree/1.9/ping-pong)
 - [1.10.](https://github.com/s94santos/dwk/tree/1.10/log_output)
+- [1.11.](https://github.com/s94santos/dwk/tree/1.11/ping-pong)
