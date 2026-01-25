@@ -62,7 +62,7 @@ func runApi() {
 	}
 
 	router := routers.SetupRouter(string(randomString))
-	router.Run(":8080")
+	router.Run(":9090")
 }
 
 func main() {

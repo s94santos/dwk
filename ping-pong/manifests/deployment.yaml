@@ -14,13 +14,6 @@ spec:
       labels:
         app: ping-pong
     spec:
-      volumes:
-        - name: shared-image
-          persistentVolumeClaim:
-            claimName: ping-pong-claim
       containers:
-      - image: ssantos94/ping-pong:q3bn4578
+      - image: ssantos94/ping-pong:8ynsbhb
         name: ping-pong
-        volumeMounts:
-        - name: shared-image
-          mountPath: /app/counter
