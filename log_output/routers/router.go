@@ -2,9 +2,9 @@ package routers
 
 import (
 	"github.com/gin-gonic/gin"
-	"time"
 	"net/http"
 	"encoding/json"
+	"os"
 )
 
 type PingResponse struct {
@@ -27,16 +27,23 @@ func getCounter() int {
 	return data.Counter
 }
 
+func readFileContent() string {
+	content, err := os.ReadFile("./cm/information.txt")
+	if err != nil {
+		panic(err)
+	}
+	return string(content)
+}
+
 func SetupRouter(randomString string) *gin.Engine {
 	r := gin.Default()
 
+	fileContent := readFileContent()
+
 	r.GET("/random", func(c *gin.Context) {
 		counter := getCounter()
-		c.JSON(200, gin.H{
-			"timestamp": time.Now().UTC().Format(time.RFC3339Nano),
-			"value":     randomString,
-			"counter":   counter,
-		})
+
+		c.String(200, "file content: %s env variable: MESSAGE=%s\n%s \nPing / Pongs: %d", fileContent, os.Getenv("MESSAGE"), randomString, counter)
 	})
 
 	return r

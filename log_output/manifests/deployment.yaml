@@ -18,18 +18,31 @@ spec:
       volumes:
       - name: data-volume
         emptyDir: {}
+      - name: config-map-volume
+        configMap:
+          name: log-output-cm
+          items:
+          - key: information.txt
+            path: information.txt
       containers:
-      - image: ssantos94/log-output:w9ebuhn
+      - image: ssantos94/log-output:n9v9wb2
         name: log-output-api
         command: ["./log-output"]
         args: ["api"]
         volumeMounts:
         - name: data-volume
           mountPath: /app/data
-      - image: ssantos94/log-output:w9ebuhn
+        - name: config-map-volume
+          mountPath: /app/cm
+        envFrom:
+        - configMapRef:
+            name: log-output-cm
+      - image: ssantos94/log-output:n9v9wb2
         name: log-output-random
         command: ["./log-output"]
         args: ["random"]
         volumeMounts:
         - name: data-volume
           mountPath: /app/data
+
+
