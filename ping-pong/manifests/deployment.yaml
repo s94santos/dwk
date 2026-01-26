@@ -16,5 +16,8 @@ spec:
         app: ping-pong
     spec:
       containers:
-      - image: ssantos94/ping-pong:8ynsbhb
+      - image: ssantos94/ping-pong:38wh0w
         name: ping-pong
+        env:
+        - name: DATABASE_URL
+          value: postgres://postgres:postgres@postgres-0.postgres:5432/pingpong
