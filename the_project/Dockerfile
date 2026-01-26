@@ -8,6 +8,6 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o /project
+RUN CGO_ENABLED=0 GOOS=linux go build -o /app/project
 
-CMD ["/project"]
+CMD ["/app/project"]

@@ -19,8 +19,10 @@ spec:
           persistentVolumeClaim:
             claimName: project-pvc
       containers:
-      - name: project
-        image: ssantos94/the_project:7GHW8V
+      - name: project-frontend
+        image: ssantos94/the_project:zdribnouh
+        command: ["./project"]
+        args: ["frontend"]
         env: 
           - name: PORT
             value: "9090"
@@ -29,3 +31,12 @@ spec:
         volumeMounts:
           - mountPath: /app/cache
             name: project-storage
+      - name: project-backend
+        image: ssantos94/the_project:zdribnouh
+        command: ["./project"]
+        args: ["backend"]
+        env: 
+          - name: PORT
+            value: "9091"
+          - name: GIN_MODE
+            value: "release"

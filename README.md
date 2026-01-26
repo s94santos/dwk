@@ -18,3 +18,4 @@
 - [1.12.](https://github.com/s94santos/dwk/tree/1.12/the_project)
 - [1.13.](https://github.com/s94santos/dwk/tree/1.13/the_project)
 - [2.1.](https://github.com/s94santos/dwk/tree/2.1/log_output)
+- [2.2.](https://github.com/s94santos/dwk/tree/2.2/the_project)

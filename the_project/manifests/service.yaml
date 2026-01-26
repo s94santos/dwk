@@ -7,6 +7,10 @@ spec:
   selector:
     app: the-project
   ports:
-    - name: http
+    - name: http-frontend
       port: 9090
       targetPort: 9090
+    - name: http-backend
+      protocol: TCP
+      port: 9091       # Service port
+      targetPort: 9091 # Pod port

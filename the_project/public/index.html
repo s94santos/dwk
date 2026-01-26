@@ -39,9 +39,10 @@
   
   <img src="/image" style="max-width:100%;" />
   
-  <form>
+  <form id="todo-form">
       <input
           type="text"
+          id="todo-title"
           placeholder="Enter a todo (max 140 chars)"
           maxlength="140"
       />
@@ -50,11 +51,7 @@
   </form>
 
   <h2>Todos</h2>
-  <ul>
-      {{ range .todos }}
-          <li>{{ . }}</li>
-      {{ end }}
-  </ul>
+  <ul id="todo-list"></ul>
 
   <script>
     const routes = {
@@ -82,8 +79,59 @@
       document.getElementById("app").innerHTML = routes[route];
     };
 
+    document.getElementById('todo-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const titleInput = document.getElementById('todo-title');
+      const title = titleInput.value.trim();
+      if (title) {
+        createTodo(title);
+        titleInput.value = '';
+      }
+    });
+    
+    const apiUrl = 'http://localhost:8081/todos';
+    
+    async function createTodo(title) {
+      try {
+        const res = await fetch(apiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ title, done: false })
+        });
+
+        if (!res.ok) throw new Error('Failed to create todo');
+
+        await fetchTodos(); // refresh the list
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+
+    // Fetch todos from backend and populate the list
+    async function fetchTodos() {
+      try {
+        const res = await fetch(apiUrl);
+        const todos = await res.json();
+
+        const list = document.getElementById('todo-list');
+        list.innerHTML = ''; // clear current list
+
+        todos.forEach(todo => {
+          const li = document.createElement('li');
+          li.textContent = `${todo.title} ${todo.done ? "(done)" : ""}`;
+          list.appendChild(li);
+        });
+      } catch (err) {
+        console.error('Failed to fetch todos', err);
+      }
+    }
+
     // Load default route
     navigate("home");
+    fetchTodos();
   </script>
 
 </body>
