@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: todo-app-cm
+  namespace: project
+data:
+  DATABASE_URL: postgres://postgres:postgres@postgres-0.postgres:5432/todo-app

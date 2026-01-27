@@ -6,6 +6,9 @@ import (
 	"the_project/m/v2/routers"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
+	"github.com/jackc/pgx/v5"
+	"log"
+	"context"
 )
 
 const (
@@ -18,8 +21,8 @@ type Todo struct {
     Done  bool   `json:"done"`
 }
 
-var todos []Todo
 var nextID int = 0
+var conn *pgx.Conn = nil
 
 func runFrontend() {
 
@@ -35,6 +38,12 @@ func runFrontend() {
 }
 
 func runApi() {
+	var err error
+	conn, err = pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer conn.Close(context.Background())
 
 	router := gin.Default()
 	router.Use(cors.Default())
@@ -52,19 +61,38 @@ func runApi() {
 
 
 func getTodos(c *gin.Context) {
+	var todos []Todo
+	rows, err := conn.Query(context.Background(), "SELECT id, title, done FROM todos")
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var todo Todo
+		err := rows.Scan(&todo.ID, &todo.Title, &todo.Done)
+		if err != nil {
+			c.JSON(500, gin.H{"error": "Database error"})
+			return
+		}
+		todos = append(todos, todo)
+	}
     c.JSON(200, todos)
 }
 
 func createTodo(c *gin.Context) {
-    var newTodo Todo
+    var newTodo Todo	
     if err := c.ShouldBindJSON(&newTodo); err != nil {
         c.JSON(400, gin.H{"error": "Invalid request body"})
         return
     }
 
-    newTodo.ID = nextID
-    nextID++
-    todos = append(todos, newTodo)
+    _, err := conn.Exec(context.Background(), "INSERT INTO todos (title, done) VALUES ($1, $2)", newTodo.Title, newTodo.Done)
+    if err != nil {
+        c.JSON(500, gin.H{"error": "Database error"})
+        return
+    }
 
     c.JSON(201, newTodo)
 }
@@ -74,7 +102,7 @@ func main() {
 		fmt.Println("usage: todo-app [api|random]")
 		os.Exit(1)
 	}
-
+	
 	switch os.Args[1] {
 	case "backend":
 		runApi()

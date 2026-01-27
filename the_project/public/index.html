@@ -88,9 +88,9 @@
         titleInput.value = '';
       }
     });
-    
+
     const apiUrl = 'http://localhost:8081/todos';
-    
+
     async function createTodo(title) {
       try {
         const res = await fetch(apiUrl, {
