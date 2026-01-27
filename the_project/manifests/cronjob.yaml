@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: random-url-job
+spec:
+  schedule: "0 * * * *"  # every hour at minute 0
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+          - name: project-random
+            image: ssantos94/the_project:sebuon43
+            command: ["/app/scripts/random.sh"]
+            env: 
+              - name: DATABASE_URL
+                valueFrom:
+                  configMapKeyRef:
+                    name: todo-app-cm
+                    key: DATABASE_URL
+      

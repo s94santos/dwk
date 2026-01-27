@@ -21,7 +21,7 @@ spec:
             claimName: project-pvc
       containers:
       - name: project-frontend
-        image: ssantos94/the_project:bn974e89B4
+        image: ssantos94/the_project:sebuon43
         command: ["./project"]
         args: ["frontend"]
         env: 
@@ -33,7 +33,7 @@ spec:
           - mountPath: /app/cache
             name: project-storage
       - name: project-backend
-        image: ssantos94/the_project:bn974e89B4
+        image: ssantos94/the_project:sebuon43
         command: ["./project"]
         args: ["backend"]
         env: 

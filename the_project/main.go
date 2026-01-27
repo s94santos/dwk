@@ -97,9 +97,30 @@ func createTodo(c *gin.Context) {
     c.JSON(201, newTodo)
 }
 
+func createhourlyTodo(url string) {
+
+	var err error
+	conn, err = pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer conn.Close(context.Background())
+    
+	var newTodo = Todo{
+		Title: "Read: " + url,
+		Done:  false,
+	}	
+
+    _, err = conn.Exec(context.Background(), "INSERT INTO todos (title, done) VALUES ($1, $2)", newTodo.Title, newTodo.Done)
+    if err != nil {
+        log.Fatal("Database error:", err)
+    }
+
+}
+
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("usage: todo-app [api|random]")
+		fmt.Println("usage: todo-app [backend|frontend|random]")
 		os.Exit(1)
 	}
 	
@@ -108,6 +129,8 @@ func main() {
 		runApi()
 	case "frontend":
 		runFrontend()
+	case "random":
+		createhourlyTodo(os.Args[2])
 	default:
 		fmt.Println("unknown command:", os.Args[1])
 		os.Exit(1)
