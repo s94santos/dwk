@@ -88,11 +88,18 @@ func createTodo(c *gin.Context) {
         return
     }
 
+	if len(newTodo.Title) > 140 {
+        c.JSON(400, gin.H{"error": "Title too long, max 140 characters"})
+        return
+    }
+
     _, err := conn.Exec(context.Background(), "INSERT INTO todos (title, done) VALUES ($1, $2)", newTodo.Title, newTodo.Done)
     if err != nil {
         c.JSON(500, gin.H{"error": "Database error"})
         return
     }
+
+	log.Printf("Created todo: %+v\n", newTodo)
 
     c.JSON(201, newTodo)
 }
