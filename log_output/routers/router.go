@@ -46,5 +46,9 @@ func SetupRouter(randomString string) *gin.Engine {
 		c.String(200, "file content: %s env variable: MESSAGE=%s\n%s \nPing / Pongs: %d", fileContent, os.Getenv("MESSAGE"), randomString, counter)
 	})
 
+	r.GET("/", func(c *gin.Context) {
+		c.String(200, "ok")
+	})
+
 	return r
 }
