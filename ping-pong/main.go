@@ -34,6 +34,12 @@ func main() {
 
 	r := gin.Default()
 
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"healthcheck": "ok",
+		})
+	})
+
 	r.GET("/pingpong", func(c *gin.Context) {
 		cnt, err := getCounterFromDB(conn)
 		if err != nil {
