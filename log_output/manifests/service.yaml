@@ -1,16 +1,13 @@
-apiVersion: gateway.networking.k8s.io/v1beta1
-kind: HTTPRoute
+apiVersion: v1
+kind: Service
 metadata:
-  name: log-output-route
   namespace: exercises
+  name: log-output-svc
 spec:
-  parentRefs:
-  - name: my-gateway
-  rules:
-  - matches:
-    - path:
-        type: PathPrefix
-        value: /random
-    backendRefs:
-    - name: log-output-svc
+  type: ClusterIP
+  selector:
+    app: log-output
+  ports:
+    - name: http
       port: 8080
+      targetPort: 9090

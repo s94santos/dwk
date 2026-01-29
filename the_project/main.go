@@ -47,6 +47,11 @@ func runApi() {
 
 	router := gin.Default()
 	router.Use(cors.Default())
+	router.GET("/", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"heath": "ok",
+		})
+	})
 	router.GET("/todos", getTodos)
     router.POST("/todos", createTodo)
 

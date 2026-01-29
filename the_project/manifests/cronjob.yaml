@@ -4,6 +4,7 @@ metadata:
   name: random-url-job
 spec:
   schedule: "0 * * * *"  # every hour at minute 0
+  suspend: true
   jobTemplate:
     spec:
       template:
