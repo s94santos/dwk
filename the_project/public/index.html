@@ -89,7 +89,7 @@
       }
     });
 
-    const apiUrl = 'http://localhost:8081/todos';
+    const apiUrl = `${window.location.origin}/todos`;
 
     async function createTodo(title) {
       try {
