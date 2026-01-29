@@ -16,7 +16,7 @@ spec:
         app: ping-pong
     spec:
       containers:
-      - image: ssantos94/ping-pong:b9wun84
+      - image: ssantos94/ping-pong:a9bn94
         name: ping-pong
         env:
         - name: DATABASE_URL
