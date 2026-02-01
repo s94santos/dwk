@@ -33,7 +33,7 @@ jobs:
       - name: 'Use gcloud CLI'
         run: gcloud info
 
-      - run: gcloud --quiet auth configure-docker
+      - run: gcloud --quiet auth configure-docker europe-southwest1-docker.pkg.dev
 
       - name: 'Get GKE credentials'
         uses: 'google-github-actions/get-gke-credentials@v2'
