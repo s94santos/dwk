@@ -9,8 +9,8 @@ env:
   GKE_ZONE: europe-southwest1
   REGISTRY: europe-southwest1-docker.pkg.dev
   REPOSITORY: my-repository
-  IMAGE: dwk-environments
-  SERVICE: dwk-environments
+  IMAGE: the_project
+  SERVICE: the-project
   BRANCH: ${{ github.ref_name }}
 
 jobs:
