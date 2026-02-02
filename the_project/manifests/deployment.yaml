@@ -6,6 +6,8 @@ metadata:
     app: the-project
   name: the-project
 spec:
+  strategy:
+    type: Recreate
   replicas: 1
   selector:
     matchLabels:
@@ -15,8 +17,6 @@ spec:
       labels:
         app: the-project
     spec:
-      strategy:
-        type: Recreate
       volumes:
         - name: project-storage
           persistentVolumeClaim:
