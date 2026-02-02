@@ -13,3 +13,5 @@ resources:
 images:
   - name: PROJECT/IMAGE
     newName: ssantos94/the_project:hinmbse4
+
+namespace: project
