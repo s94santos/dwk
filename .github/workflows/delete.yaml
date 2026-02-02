@@ -1,0 +1,59 @@
+name: Delete application
+
+on:
+  delete:
+
+env:
+  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
+  GKE_CLUSTER: dwk-cluster
+  GKE_ZONE: europe-southwest1
+  REGISTRY: europe-southwest1-docker.pkg.dev
+  REPOSITORY: my-repository
+  IMAGE: the_project
+  SERVICE: the-project
+  BRANCH: ${{ github.ref_name }}
+
+jobs:
+  build-publish-deploy:
+    name: Delete cluster resources
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GKE_SA_KEY }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: 'Get GKE credentials'
+        uses: 'google-github-actions/get-gke-credentials@v2'
+        with:
+          cluster_name: '${{ env.GKE_CLUSTER }}'
+          project_id: '${{ env.PROJECT_ID }}'
+          location: '${{ env.GKE_ZONE }}'
+
+      - name: Set up Kustomize
+        uses: imranismail/setup-kustomize@v2.1.0
+
+      - name: Delete
+        run: |-
+          
+          cd ./the_project
+          
+          if [ "$BRANCH_NAME" != "master" ]; then
+            kustomize edit set namespace $BRANCH
+            kubectl config set-context --current --namespace=$BRANCH
+          else
+            kustomize edit set namespace project
+            kubectl config set-context --current --namespace=project
+          fi
+
+          kustomize build . | kubectl delete -f -
+          kubectl rollout status deployment $SERVICE
+          
+          kubectl delete namespace $BRANCH
