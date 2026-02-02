@@ -41,19 +41,26 @@ jobs:
         uses: imranismail/setup-kustomize@v2.1.0
 
       - name: Delete
-        run: |-
+        run: |
           
           cd ./the_project
-          
-          if [ "$BRANCH_NAME" != "master" ]; then
-            kustomize edit set namespace $BRANCH
-            kubectl config set-context --current --namespace=$BRANCH
-          else
-            kustomize edit set namespace project
-            kubectl config set-context --current --namespace=project
+
+          # Get the deleted branch name
+          BRANCH_NAME="${GITHUB_REF#refs/heads/}"
+          echo "Deleted branch: $BRANCH_NAME"
+
+          # Skip master
+          if [ "$BRANCH_NAME" = "master" ]; then
+            echo "Master branch detected — nothing to delete"
+            exit 0
           fi
 
-          kustomize build . | kubectl delete -f -
-          kubectl rollout status deployment $SERVICE
-          
-          kubectl delete namespace $BRANCH
+          # Set namespace in kustomization
+          kustomize edit set namespace "$SAFE_NAMESPACE"
+          kubectl config set-context --current --namespace="$SAFE_NAMESPACE"
+
+          # Delete all resources
+          kustomize build . | kubectl delete -f - --ignore-not-found
+
+          # Delete the namespace itself
+          kubectl delete namespace "$SAFE_NAMESPACE" --ignore-not-found
