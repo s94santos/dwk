@@ -46,7 +46,7 @@ jobs:
           cd ./the_project
 
           # Get the deleted branch name
-          BRANCH_NAME="${GITHUB_REF#refs/heads/}"
+          BRANCH_NAME="${{github.event.ref}}"
           echo "Deleted branch: $BRANCH_NAME"
 
           # Skip master
@@ -56,11 +56,11 @@ jobs:
           fi
 
           # Set namespace in kustomization
-          kustomize edit set namespace "$SAFE_NAMESPACE"
-          kubectl config set-context --current --namespace="$SAFE_NAMESPACE"
+          kustomize edit set namespace "$BRANCH_NAME"
+          kubectl config set-context --current --namespace="$BRANCH_NAME"
 
           # Delete all resources
           kustomize build . | kubectl delete -f - --ignore-not-found
 
           # Delete the namespace itself
-          kubectl delete namespace "$SAFE_NAMESPACE" --ignore-not-found
+          kubectl delete namespace "$BRANCH_NAME" --ignore-not-found
