@@ -63,7 +63,15 @@ jobs:
         run: |-
           cd ./the_project
           kustomize edit set image PROJECT/IMAGE=$IMAGE_TAG
-          kustomize edit set namespace $BRANCH
+          
+          if [ "$BRANCH_NAME" != "master" ]; then
+            kustomize edit set namespace $BRANCH
+            kubectl config set-context --current --namespace=project
+          else
+            kustomize edit set namespace $BRANCH
+            kubectl config set-context --current --namespace=project
+          fi
+
           kustomize build . | kubectl apply -f -
-          kubectl rollout status deployment $SERVICE -n $BRANCH
+          kubectl rollout status deployment $SERVICE
           kubectl get services -o wide
