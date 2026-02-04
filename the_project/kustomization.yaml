@@ -12,6 +12,7 @@ resources:
 
 images:
   - name: PROJECT/IMAGE
-    newName: ssantos94/the_project:hinmbse4
+    newName: europe-southwest1-docker.pkg.dev/dwk-gke-485711/my-repository/the_project:3.11-7540e6cc1ac19aa85de9b71744a6ea9341c2c63d
 
-namespace: project
+
+namespace: master
