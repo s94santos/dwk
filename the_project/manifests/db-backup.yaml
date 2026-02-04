@@ -1,0 +1,35 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: db-backup
+  namespace: project
+spec:
+  schedule: "0 0 * * *"
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+          - name: project-random
+            image: europe-southwest1-docker.pkg.dev/dwk-gke-485711/my-repository/todo-db-backup:w0498h04
+            command: ["/bin/sh", "-c", "/app/backup.sh"]
+            env: 
+              - name: URL
+                value: postgres://postgres:postgres@postgres.project.svc.cluster.local:5432/todo-app
+              - name: PROJECT_ID
+                value: dwk-gke-485711
+              - name: BUCKET_NAME
+                value: pg-todo-dwk-backup
+            volumeMounts:
+              - name: service-account
+                mountPath: /app/scripts/
+          volumes:
+            - name: service-account
+              secret:
+                secretName: gcs-uploader-key
+                items:
+                - key: key.json
+                  path: service-account.json
+      
