@@ -34,6 +34,13 @@ spec:
         volumeMounts:
           - mountPath: /app/cache
             name: project-storage
+        resources:
+          limits:
+            memory: "100Mi"
+            cpu: "50m"
+          requests:
+            memory: "50Mi"
+            cpu: "25m"
       - name: project-backend
         image: PROJECT/IMAGE
         command: ["./project"]
