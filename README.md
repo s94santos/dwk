@@ -38,3 +38,5 @@
 - [3.9.] - not done yet
 - [3.10.](https://github.com/s94santos/dwk/tree/3.10/the_project)
 - [3.11.](https://github.com/s94santos/dwk/tree/3.11/the_project)
+- [3.12.](https://github.com/s94santos/dwk/tree/3.12/the_project)
+- [4.1.] (https://github.com/s94santos/dwk/tree/3.12/ping-pong)

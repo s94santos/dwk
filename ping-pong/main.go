@@ -2,45 +2,68 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"log"
 	"context"
 	"os"
+	"time"
+	"net/http"
 )
 
-func getCounterFromDB(conn *pgx.Conn) (int, error) {
+type App struct {
+	db *pgxpool.Pool
+	router *gin.Engine
+}
+
+func (app *App) getCounterFromDB() (int, error) {
 	var value int
-	err := conn.QueryRow(context.Background(), "SELECT value FROM counter WHERE name = 'main'").Scan(&value)
+	err := app.db.QueryRow(context.Background(), "SELECT value FROM counter WHERE name = 'main'").Scan(&value)
 	if err != nil {
 		return 0, err
 	}
 	return value, nil
 }
 
-func setCounterInDB(conn *pgx.Conn, value int) error {
-	_, err := conn.Exec(context.Background(), "UPDATE counter SET value=$1 WHERE name='main'", value)
+func (app *App) setCounterInDB(value int) error {
+	_, err := app.db.Exec(context.Background(), "UPDATE counter SET value=$1 WHERE name='main'", value)
 	return err
 }
 
 func main() {
 
-	conn, err := pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
+	pool, err := pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
 	if err != nil {
 		log.Fatal(err)
 	}
-	
-	defer conn.Close(context.Background())
-
+	defer pool.Close()
 
 	r := gin.Default()
 
+	app := App{
+		db: pool,
+		router: r,
+	}
+
+	r.GET("/healthz", func(c *gin.Context) {
+
+		ctx, cancel := context.WithTimeout(c.Request.Context(), time.Second)
+		defer cancel()
+
+		if err := app.db.Ping(ctx); err != nil {
+			c.String(http.StatusServiceUnavailable, "db not ready")
+			return
+		}
+
+		c.String(http.StatusOK, "ready")
+	})
+
 	r.GET("/", func(c *gin.Context) {
-		cnt, err := getCounterFromDB(conn)
+		cnt, err := app.getCounterFromDB()
 		if err != nil {
 			log.Fatal(err)
 		}
 		cnt++
-		err = setCounterInDB(conn, cnt)
+		err = app.setCounterInDB(cnt)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -50,7 +73,7 @@ func main() {
 	})
 
 	r.GET("/ping", func(c *gin.Context) {
-		value, err := getCounterFromDB(conn)
+		value, err := app.getCounterFromDB()
 		if err != nil {
 			log.Fatal(err)
 		}

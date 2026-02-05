@@ -50,5 +50,17 @@ func SetupRouter(randomString string) *gin.Engine {
 		c.String(200, "ok")
 	})
 
+	r.GET("/healthz", func(c *gin.Context) {
+
+		resp, err := http.Get("http://ping-pong-svc:3000/healthz")
+		if err != nil {
+			c.String(http.StatusInternalServerError, "ping-pong service is not healthy")
+			return
+		}
+		defer resp.Body.Close()
+
+		c.String(http.StatusOK, "ready")
+	})
+
 	return r
 }

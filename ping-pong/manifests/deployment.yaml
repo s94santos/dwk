@@ -16,8 +16,19 @@ spec:
         app: ping-pong
     spec:
       containers:
-      - image: ssantos94/ping-pong:a9bn94
+      - image: ssantos94/ping-pong:9s8hg9bw
         name: ping-pong
         env:
         - name: DATABASE_URL
           value: postgres://postgres:postgres@postgres-0.postgres:5432/pingpong
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 128Mi
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
