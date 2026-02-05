@@ -2,6 +2,8 @@ name: Release application
 
 on:
   push:
+    tags-ignore:
+      - '*'
 
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
