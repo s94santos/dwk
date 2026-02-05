@@ -6,9 +6,11 @@ import (
 	"the_project/m/v2/routers"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"log"
 	"context"
+	"time"
+	"net/http"
 )
 
 const (
@@ -22,7 +24,7 @@ type Todo struct {
 }
 
 var nextID int = 0
-var conn *pgx.Conn = nil
+var pool *pgxpool.Pool = nil
 
 func runFrontend() {
 
@@ -39,19 +41,29 @@ func runFrontend() {
 
 func runApi() {
 	var err error
-	conn, err = pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
+	pool, err = pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer conn.Close(context.Background())
+	defer pool.Close()
 
 	router := gin.Default()
 	router.Use(cors.Default())
-	router.GET("/", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"heath": "ok",
+
+	router.GET("/healthz", func(c *gin.Context) {
+
+			ctx, cancel := context.WithTimeout(c.Request.Context(), time.Second)
+			defer cancel()
+
+			if err := pool.Ping(ctx); err != nil {
+				c.String(http.StatusServiceUnavailable, "db not ready")
+				return
+			}
+
+			c.String(http.StatusOK, "ready")
 		})
-	})
+
+
 	router.GET("/todos", getTodos)
     router.POST("/todos", createTodo)
 
@@ -67,7 +79,7 @@ func runApi() {
 
 func getTodos(c *gin.Context) {
 	var todos []Todo
-	rows, err := conn.Query(context.Background(), "SELECT id, title, done FROM todos")
+	rows, err := pool.Query(context.Background(), "SELECT id, title, done FROM todos")
 	if err != nil {
 		log.Fatal(err)
 		return
@@ -98,7 +110,7 @@ func createTodo(c *gin.Context) {
         return
     }
 
-    _, err := conn.Exec(context.Background(), "INSERT INTO todos (title, done) VALUES ($1, $2)", newTodo.Title, newTodo.Done)
+    _, err := pool.Exec(context.Background(), "INSERT INTO todos (title, done) VALUES ($1, $2)", newTodo.Title, newTodo.Done)
     if err != nil {
         c.JSON(500, gin.H{"error": "Database error"})
         return
@@ -112,18 +124,18 @@ func createTodo(c *gin.Context) {
 func createhourlyTodo(url string) {
 
 	var err error
-	conn, err = pgx.Connect(context.Background(), os.Getenv("DATABASE_URL"))
+	pool, err = pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer conn.Close(context.Background())
+	defer pool.Close()
     
 	var newTodo = Todo{
 		Title: "Read: " + url,
 		Done:  false,
 	}	
 
-    _, err = conn.Exec(context.Background(), "INSERT INTO todos (title, done) VALUES ($1, $2)", newTodo.Title, newTodo.Done)
+    _, err = pool.Exec(context.Background(), "INSERT INTO todos (title, done) VALUES ($1, $2)", newTodo.Title, newTodo.Done)
     if err != nil {
         log.Fatal("Database error:", err)
     }
