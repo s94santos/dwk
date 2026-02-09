@@ -53,6 +53,9 @@
   <h2>Todos</h2>
   <ul id="todo-list"></ul>
 
+  <h2>Done</h2>
+  <ul id="done-list"></ul>
+
   <script>
     const routes = {
       home: `
@@ -109,20 +112,48 @@
       }
     }
 
+    async function updateTodo(id, done) {
+      try {
+        const res = await fetch(`${apiUrl}/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ done })
+        });
+
+        if (!res.ok) throw new Error('Failed to update todo');
+
+        await fetchTodos(); // refresh the list
+      } catch (err) {
+        console.error(err);
+      }
+    }
 
     // Fetch todos from backend and populate the list
     async function fetchTodos() {
       try {
         const res = await fetch(apiUrl);
         const todos = await res.json();
+        if (!todos) return;
 
         const list = document.getElementById('todo-list');
+        const doneList = document.getElementById('done-list');
         list.innerHTML = ''; // clear current list
+        doneList.innerHTML = ''; // clear done list
 
         todos.forEach(todo => {
           const li = document.createElement('li');
-          li.textContent = `${todo.title} ${todo.done ? "(done)" : ""}`;
-          list.appendChild(li);
+          li.textContent = todo.title;
+          if (todo.done) {
+            doneList.appendChild(li);
+          } else {
+            const btn = document.createElement('button');
+            btn.textContent = "Mark as done";
+            btn.onclick = () => updateTodo(todo.id, true);
+            li.appendChild(btn);
+            list.appendChild(li);
+          }
         });
       } catch (err) {
         console.error('Failed to fetch todos', err);

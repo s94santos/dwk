@@ -6,6 +6,8 @@ COPY go.mod go.sum ./
 
 RUN go mod download
 
+RUN mkdir /app/cache
+
 COPY . .
 
 RUN chmod +x ./scripts/random.sh

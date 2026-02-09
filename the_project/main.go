@@ -11,6 +11,7 @@ import (
 	"context"
 	"time"
 	"net/http"
+	"strconv"
 )
 
 const (
@@ -66,6 +67,7 @@ func runApi() {
 
 	router.GET("/todos", getTodos)
     router.POST("/todos", createTodo)
+	router.PUT("/todos/:id", updateTodo)
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -119,6 +121,31 @@ func createTodo(c *gin.Context) {
 	log.Printf("Created todo: %+v\n", newTodo)
 
     c.JSON(201, newTodo)
+}
+
+func updateTodo(c *gin.Context) {
+	id := c.Param("id")
+	intID, err := strconv.Atoi(id)
+	if err != nil {
+		c.JSON(400, gin.H{"error": "Invalid ID"})
+		return
+	}
+
+	var todo Todo
+	if err := c.ShouldBindJSON(&todo); err != nil {
+		c.JSON(400, gin.H{"error": "Invalid request body"})
+		return
+	}
+
+	_, err = pool.Exec(context.Background(), "UPDATE todos SET done = $1 WHERE id = $2", todo.Done, intID)
+	if err != nil {
+		c.JSON(500, gin.H{"error": "Database error"})
+		return
+	}
+
+	log.Printf("Updated todo: %+v\n", todo)
+
+	c.JSON(200, todo)
 }
 
 func createhourlyTodo(url string) {
