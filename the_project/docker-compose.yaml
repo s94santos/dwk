@@ -1,0 +1,39 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: todo-app
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: go_frontend
+    command: go run . frontend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: go_backend
+    command: go run . backend
+    ports:
+      - "9090:9090"
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/todo-app?sslmode=disable
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
