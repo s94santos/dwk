@@ -12,6 +12,7 @@ import (
 	"time"
 	"net/http"
 	"strconv"
+	"github.com/nats-io/nats.go"
 )
 
 const (
@@ -26,6 +27,7 @@ type Todo struct {
 
 var nextID int = 0
 var pool *pgxpool.Pool = nil
+var nc *nats.Conn = nil
 
 func runFrontend() {
 
@@ -47,6 +49,17 @@ func runApi() {
 		log.Fatal(err)
 	}
 	defer pool.Close()
+
+	natsURL := os.Getenv("NATS_URL")
+	if natsURL == "" {
+		natsURL = "nats://my-nats:4222"
+	}
+	nc, err = nats.Connect(natsURL)
+	if err != nil {
+		log.Printf("Error connecting to NATS: %v", err)
+	} else {
+		defer nc.Close()
+	}
 
 	router := gin.Default()
 	router.Use(cors.Default())
@@ -120,6 +133,10 @@ func createTodo(c *gin.Context) {
 
 	log.Printf("Created todo: %+v\n", newTodo)
 
+	if nc != nil {
+		nc.Publish("todo_updates", []byte("A todo was created"))
+	}
+
     c.JSON(201, newTodo)
 }
 
@@ -144,6 +161,10 @@ func updateTodo(c *gin.Context) {
 	}
 
 	log.Printf("Updated todo: %+v\n", todo)
+
+	if nc != nil {
+		nc.Publish("todo_updates", []byte("A todo was updated"))
+	}
 
 	c.JSON(200, todo)
 }
