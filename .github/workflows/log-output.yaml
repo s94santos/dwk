@@ -2,8 +2,6 @@ name: Release application
 
 on:
   push:
-    tags-ignore:
-      - '*'
 
 jobs:
   build-publish-deploy:
