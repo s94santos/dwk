@@ -2,8 +2,6 @@ name: Release application
 
 on:
   push:
-    paths:
-      - log_output/**'
     tags-ignore:
       - '*'
 

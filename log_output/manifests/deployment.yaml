@@ -48,3 +48,4 @@ spec:
         volumeMounts:
         - name: data-volume
           mountPath: /app/data
+
