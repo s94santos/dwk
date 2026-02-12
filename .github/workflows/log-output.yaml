@@ -7,16 +7,6 @@ on:
     tags-ignore:
       - '*'
 
-env:
-  PROJECT_ID: ${{ secrets.GKE_PROJECT }}
-  GKE_CLUSTER: dwk-cluster
-  GKE_ZONE: europe-southwest1
-  REGISTRY: europe-southwest1-docker.pkg.dev
-  REPOSITORY: my-repository
-  IMAGE: the_project
-  SERVICE: the-project
-  BRANCH: ${{ github.ref_name }}
-
 jobs:
   build-publish-deploy:
     name: Build, Publish and Deploy
