@@ -19,14 +19,14 @@ jobs:
 
       - name: Build and publish backend
         run: |-
-          docker build --tag "ssantos94/log_output:$GITHUB_SHA" .
-          docker push "ssantos94/log_output:$GITHUB_SHA"
+          docker build --tag "ssantos94/log-output:$GITHUB_SHA" .
+          docker push "ssantos94/log-output:$GITHUB_SHA"
 
       - name: Set up Kustomize
         uses: imranismail/setup-kustomize@v2.1.0
 
       - name: Use right image
-        run: kustomize edit set image PROJECT/IMAGE=ssantos94/log_output:$GITHUB_SHA
+        run: kustomize edit set image PROJECT/IMAGE=ssantos94/log-output:$GITHUB_SHA
 
       - name: commit kustomization.yaml to GitHub
         uses: EndBug/add-and-commit@v9
