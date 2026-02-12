@@ -10,7 +10,8 @@ jobs:
     environment: production
     defaults:
       run:
-        working-directory: ./the_project
+        working-directory: log_output
+
 
     steps:
       - name: Checkout
