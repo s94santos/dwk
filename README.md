@@ -44,3 +44,4 @@
 - [4.3.] sum(kube_pod_info{namespace="monitoring",created_by_kind="StatefulSet"})
 - [4.4.](https://github.com/s94santos/dwk/tree/4.4/ping-pong)
 - [4.5.](https://github.com/s94santos/dwk/tree/4.5/the_project)
+- [4.6.](https://github.com/s94santos/dwk/tree/4.6/the_project)
