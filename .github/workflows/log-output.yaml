@@ -2,6 +2,9 @@ name: Release application
 
 on:
   push:
+    paths:
+      - log_output/**
+
 
 jobs:
   build-publish-deploy:
